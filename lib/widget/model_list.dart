@@ -4,7 +4,8 @@ import 'package:xambot/pages/chat_page.dart';
 
 class ModelList extends StatefulWidget {
   final String label;
-  const ModelList({super.key, required this.label});
+  final String image;
+  const ModelList({super.key, required this.label, required this.image});
 
   @override
   State<ModelList> createState() => _ModelListState();
@@ -18,7 +19,17 @@ class _ModelListState extends State<ModelList> {
       child: ListTile(
         // trailing: const Icon(Icons.arrow_forward_ios_sharp),
         // leading: const Icon(Icons.handyman_outlined),
-        leading: Image.asset("images/ai.png", height: 48, width: 48),
+        leading: Container(
+          height: 36,
+          width: 36,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            image: DecorationImage(
+              image: AssetImage(widget.image),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         title: Text(
           widget.label,
           style: GoogleFonts.poppins(fontSize: 14),
@@ -29,7 +40,11 @@ class _ModelListState extends State<ModelList> {
         textColor: Colors.black87,
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Chat(name: widget.label)),
+            MaterialPageRoute(
+                builder: (context) => Chat(
+                      name: widget.label,
+                      image: widget.image,
+                    )),
           );
         },
         tileColor: Colors.blueGrey[300],

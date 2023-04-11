@@ -22,13 +22,13 @@ class _HomeState extends State<Home> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
-            height: 16,
+            height: 24,
             width: 16,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(48),
               image: const DecorationImage(
                 image: AssetImage("images/logo.png"),
-                fit: BoxFit.cover,
+                fit: BoxFit.scaleDown,
               ),
             ),
           ),
@@ -47,10 +47,12 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: const [
-            ModelList(label: "gpt-4"),
-            ModelList(label: "gpt-3.5-turbo"),
-            ModelList(label: "text-davinci-003"),
-            ModelList(label: "code-davinci-002"),
+            ModelList(label: "gpt-4", image: "images/gpt4.png"),
+            ModelList(label: "gpt-3.5-turbo", image: "images/gpt3.png"),
+            ModelList(
+                label: "text-davinci-003", image: "images/text_davinci.png"),
+            ModelList(
+                label: "code-davinci-002", image: "images/code_davinci.png"),
           ],
         ),
       )),

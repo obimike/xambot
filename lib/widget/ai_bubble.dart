@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class UserBubble extends StatefulWidget {
+class AIBubble extends StatefulWidget {
   final String module;
   final String moduleImage;
   final String msg;
   final String msgTime;
 
-  const UserBubble(
+  const AIBubble(
       {super.key,
       required this.module,
       required this.moduleImage,
@@ -15,10 +15,10 @@ class UserBubble extends StatefulWidget {
       required this.msgTime});
 
   @override
-  State<UserBubble> createState() => _UserBubbleState();
+  State<AIBubble> createState() => _AIBubbleState();
 }
 
-class _UserBubbleState extends State<UserBubble> {
+class _AIBubbleState extends State<AIBubble> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,11 +26,22 @@ class _UserBubbleState extends State<UserBubble> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Expanded(
-            child: SizedBox(),
+          Container(
+            height: 36,
+            width: 36,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              image: DecorationImage(
+                image: AssetImage(widget.moduleImage),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 4,
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,6 +60,9 @@ class _UserBubbleState extends State<UserBubble> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 4,
+              ),
               Container(
                 padding: const EdgeInsets.all(12),
                 // width: MediaQuery.of(context).size.width * 0.5,
@@ -56,11 +70,12 @@ class _UserBubbleState extends State<UserBubble> {
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey[200],
+                  color: Colors.grey[200],
                   borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
-                      topLeft: Radius.circular(16)),
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
                 ),
                 child: Text(
                   widget.msg,
@@ -69,19 +84,8 @@ class _UserBubbleState extends State<UserBubble> {
               ),
             ],
           ),
-          const SizedBox(
-            width: 4,
-          ),
-          Container(
-            height: 36,
-            width: 36,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              image: DecorationImage(
-                image: AssetImage(widget.moduleImage),
-                fit: BoxFit.cover,
-              ),
-            ),
+          const Expanded(
+            child: SizedBox(),
           ),
         ],
       ),
