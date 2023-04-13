@@ -4,6 +4,7 @@ import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
 import '../api/send_request.dart';
+import 'package:text_to_speech/text_to_speech.dart';
 
 class Chat extends StatefulWidget {
   final String name;
@@ -15,44 +16,63 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  final _messages = [
-    {"text": "Hello, how can I help you?", "isUser": false},
-    {"text": "I'm having trouble with my account", "isUser": true},
-    {
-      "text": "I'm sorry to hear that. What seems to be the problem?",
-      "isUser": false
-    },
-    {"text": "I can't seem to log in", "isUser": true},
-    {
-      "text": "Let me check that for you. What is your username?",
-      "isUser": false
-    },
-    {"text": "My username is johnsmith", "isUser": true},
-    {
-      "text": "Thank you. Please hold while I check your account",
-      "isUser": false
-    },
-    {"text": "Sure", "isUser": true},
-    {
-      "text":
-          "I've found the problem. Your account was locked due to too many failed login attempts. I have unlocked it for you. Please try logging in again",
-      "isUser": false
-    },
-    {"text": "Thank you, that worked", "isUser": true},
-    {
-      "text": "You're welcome. Is there anything else I can help you with?",
-      "isUser": false
-    },
-  ];
+  TextToSpeech tts = TextToSpeech();
+  final String defaultLanguage = 'en-US';
+
+  double volume = 1; // Range: 0-1
+  double rate = 1.0; // Range: 0-2
+  double pitch = 1.0; // Range: 0-2
+
+  void speak(text) {
+    tts.setRate(rate);
+    tts.setLanguage(defaultLanguage);
+    tts.setPitch(pitch);
+    tts.speak(text);
+  }
+
+  final _messages = [];
 
   final TextEditingController _controller = TextEditingController();
 
-  void _sendMessage(String msg) {
+  bool textToSpeaker = false;
+  bool isLoading = false;
+
+  void _sendMessage(String msg) async {
     setState(() {
-      _messages.add({"text": msg, "isUser": true});
+      _messages.add({
+        "content": msg,
+        "role": "user",
+        "time": DateFormat('h:mm a').format(DateTime.now())
+      });
+      isLoading = true;
     });
-    scrollToBottom();
     _controller.clear();
+    scrollToBottom();
+
+    try {
+      final chat = await APiCalls.getChat(msg);
+
+      setState(() {
+        isLoading = false;
+        _messages.add({
+          "content": chat.msg,
+          "role": chat.role,
+          "time": DateFormat('h:mm a')
+              .format(DateTime.fromMillisecondsSinceEpoch(
+                  int.parse(chat.time) * 1000))
+              .toString()
+        });
+      });
+      if (textToSpeaker) {
+        speak(chat.msg);
+      }
+    } on Exception catch (e) {
+      // TODO
+      debugPrint(e.toString());
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   var scrollController = ScrollController();
@@ -61,6 +81,9 @@ class _ChatState extends State<Chat> {
   void initState() {
     super.initState();
     scrollController = ScrollController();
+    setState(() {
+      isLoading = false;
+    });
     // scrollToBottom();
   }
 
@@ -73,7 +96,6 @@ class _ChatState extends State<Chat> {
   void scrollToBottom() {
     final bottomOffset = scrollController.position.maxScrollExtent +
         MediaQuery.of(context).size.height;
-    print(bottomOffset);
     scrollController.animateTo(
       bottomOffset,
       duration: const Duration(milliseconds: 1000),
@@ -90,8 +112,20 @@ class _ChatState extends State<Chat> {
         title: Text(widget.name),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.speaker_notes_off),
+            onPressed: () {
+              if (textToSpeaker) {
+                setState(() {
+                  textToSpeaker = false;
+                });
+              } else {
+                setState(() {
+                  textToSpeaker = true;
+                });
+              }
+            },
+            icon: textToSpeaker
+                ? const Icon(Icons.speaker_notes)
+                : const Icon(Icons.speaker_notes_off),
           ),
         ],
       ),
@@ -104,16 +138,16 @@ class _ChatState extends State<Chat> {
                 reverse: false,
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
-                  return (_messages[index]["isUser"] == false
+                  return (_messages[index]["role"] == "assistant"
                       ? AIBubble(
                           module: widget.name,
                           moduleImage: widget.image,
-                          msg: _messages[index]["text"].toString(),
-                          msgTime: "8:50 AM")
+                          msg: _messages[index]["content"].toString(),
+                          msgTime: _messages[index]["time"].toString())
                       : UserBubble(
                           module: "You",
                           moduleImage: "images/ai.png",
-                          msg: _messages[index]["text"].toString(),
+                          msg: _messages[index]["content"].toString(),
                           msgTime: DateFormat('h:mm a')
                               .format(DateTime.now())
                               .toString(),
@@ -121,10 +155,10 @@ class _ChatState extends State<Chat> {
                 },
               ),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: isLoading ? 20 : 0,
               width: 100,
-              child: LoadKitLineChase(
+              child: const LoadKitLineChase(
                 itemCount: 3,
               ),
             ),

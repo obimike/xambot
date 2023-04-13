@@ -53,6 +53,11 @@ class _HomeState extends State<Home> {
                 label: "text-davinci-003", image: "images/text_davinci.png"),
             ModelList(
                 label: "code-davinci-002", image: "images/code_davinci.png"),
+            ModelList(label: "babbage", image: "images/code_davinci.png"),
+            ModelList(label: "davinci", image: "images/code_davinci.png"),
+            ModelList(
+                label: "text-davinci-edit-001",
+                image: "images/code_davinci.png"),
           ],
         ),
       )),

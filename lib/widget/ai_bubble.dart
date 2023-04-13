@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class AIBubble extends StatefulWidget {
   final String module;
@@ -77,9 +78,20 @@ class _AIBubbleState extends State<AIBubble> {
                     topRight: Radius.circular(16),
                   ),
                 ),
-                child: Text(
-                  widget.msg,
-                  style: GoogleFonts.manrope(fontSize: 14),
+                child: AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText(
+                      widget.msg,
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontFamily: "manrope",
+                      ),
+                      speed: const Duration(milliseconds: 100),
+                    ),
+                  ],
+                  totalRepeatCount: 1,
+                  displayFullTextOnTap: true,
+                  stopPauseOnTap: true,
                 ),
               ),
             ],

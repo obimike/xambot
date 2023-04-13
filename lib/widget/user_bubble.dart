@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class UserBubble extends StatefulWidget {
   final String module;
@@ -68,20 +69,6 @@ class _UserBubbleState extends State<UserBubble> {
                 ),
               ),
             ],
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          Container(
-            height: 36,
-            width: 36,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              image: DecorationImage(
-                image: AssetImage(widget.moduleImage),
-                fit: BoxFit.cover,
-              ),
-            ),
           ),
         ],
       ),
