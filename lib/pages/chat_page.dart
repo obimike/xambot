@@ -52,19 +52,24 @@ class _ChatState extends State<Chat> {
     try {
       final chat = await APiCalls.getChat(msg);
 
-      setState(() {
-        isLoading = false;
-        _messages.add({
-          "content": chat.msg,
-          "role": chat.role,
-          "time": DateFormat('h:mm a')
-              .format(DateTime.fromMillisecondsSinceEpoch(
-                  int.parse(chat.time) * 1000))
-              .toString()
+      if (chat != null) {
+        setState(() {
+          isLoading = false;
+          _messages.add({
+            "content": chat.msg,
+            "role": chat.role,
+            "time": DateFormat('h:mm a')
+                .format(DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(chat.time) * 1000))
+                .toString()
+          });
         });
-      });
-      if (textToSpeaker) {
-        speak(chat.msg);
+        if (textToSpeaker) {
+          speak(chat.msg);
+        }
+        scrollToBottom();
+      } else {
+        print("Error");
       }
     } on Exception catch (e) {
       // TODO
@@ -130,74 +135,82 @@ class _ChatState extends State<Chat> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Flexible(
-              child: ListView.builder(
-                controller: scrollController,
-                reverse: false,
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  return (_messages[index]["role"] == "assistant"
-                      ? AIBubble(
-                          module: widget.name,
-                          moduleImage: widget.image,
-                          msg: _messages[index]["content"].toString(),
-                          msgTime: _messages[index]["time"].toString())
-                      : UserBubble(
-                          module: "You",
-                          moduleImage: "images/ai.png",
-                          msg: _messages[index]["content"].toString(),
-                          msgTime: DateFormat('h:mm a')
-                              .format(DateTime.now())
-                              .toString(),
-                        ));
-                },
-              ),
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/bg.jpg"),
+              fit: BoxFit.cover,
             ),
-            SizedBox(
-              height: isLoading ? 20 : 0,
-              width: 100,
-              child: const LoadKitLineChase(
-                itemCount: 3,
+          ),
+          child: Column(
+            children: [
+              Flexible(
+                child: ListView.builder(
+                  controller: scrollController,
+                  reverse: false,
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    return (_messages[index]["role"] == "assistant"
+                        ? AIBubble(
+                            module: widget.name,
+                            moduleImage: widget.image,
+                            msg: _messages[index]["content"].toString(),
+                            msgTime: _messages[index]["time"].toString())
+                        : UserBubble(
+                            module: "You",
+                            moduleImage: "images/ai.png",
+                            msg: _messages[index]["content"].toString(),
+                            msgTime: DateFormat('h:mm a')
+                                .format(DateTime.now())
+                                .toString(),
+                          ));
+                  },
+                ),
               ),
-            ),
-            Container(
-              color: Colors.grey,
-              padding: const EdgeInsets.only(left: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration.collapsed(
-                          hintText: "Send a message...",
-                          fillColor: Colors.grey[300],
+              SizedBox(
+                height: isLoading ? 20 : 0,
+                width: 100,
+                child: const LoadKitLineChase(
+                  itemCount: 3,
+                ),
+              ),
+              Container(
+                color: Colors.grey,
+                padding: const EdgeInsets.only(left: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
-                        controller: _controller,
+                        child: TextField(
+                          decoration: InputDecoration.collapsed(
+                            hintText: "Send a message...",
+                            fillColor: Colors.grey[300],
+                          ),
+                          controller: _controller,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () => {
-                      if (_controller.text.isNotEmpty)
-                        {_sendMessage(_controller.text)}
-                    },
-                    icon: Icon(
-                      Icons.send,
-                      color: Colors.blueGrey[900],
+                    IconButton(
+                      onPressed: () => {
+                        if (_controller.text.isNotEmpty)
+                          {_sendMessage(_controller.text)}
+                      },
+                      icon: Icon(
+                        Icons.send,
+                        color: Colors.blueGrey[900],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

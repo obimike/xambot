@@ -50,14 +50,17 @@ class _AIBubbleState extends State<AIBubble> {
                   Text(
                     widget.module,
                     style: GoogleFonts.manrope(
-                        fontSize: 14, fontWeight: FontWeight.w600),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
                   Text(
                     widget.msgTime,
-                    style: GoogleFonts.manrope(fontSize: 14),
+                    style:
+                        GoogleFonts.manrope(fontSize: 14, color: Colors.white),
                   ),
                 ],
               ),

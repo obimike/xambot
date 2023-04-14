@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 
 class UserBubble extends StatefulWidget {
   final String module;
@@ -39,14 +38,17 @@ class _UserBubbleState extends State<UserBubble> {
                   Text(
                     widget.module,
                     style: GoogleFonts.manrope(
-                        fontSize: 14, fontWeight: FontWeight.w600),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
                   Text(
                     widget.msgTime,
-                    style: GoogleFonts.manrope(fontSize: 14),
+                    style:
+                        GoogleFonts.manrope(fontSize: 14, color: Colors.white),
                   ),
                 ],
               ),
