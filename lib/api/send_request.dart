@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:xambot/model/chat_model.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class APiCalls {
   static final headers = {
     'Content-Type': 'application/json',
-    'Authorization':
-        'Bearer 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',
+    'Authorization': 'Bearer ${dotenv.env['OPENAI_KEY']}',
   };
 
   static String baseURL = "https://api.openai.com/v1";
@@ -23,6 +23,8 @@ class APiCalls {
       };
       final res =
           await http.post(url, headers: headers, body: json.encode(data));
+
+      print(res.statusCode);
 
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
