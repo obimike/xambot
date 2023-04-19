@@ -20,8 +20,8 @@ class _ChatState extends State<Chat> {
   final String defaultLanguage = 'en-US';
 
   double volume = 1; // Range: 0-1
-  double rate = 0.8; // Range: 0-2
-  double pitch = 1.2; // Range: 0-2
+  double rate = 1; // Range: 0-2
+  double pitch = 0.5; // Range: 0-2
 
   void speak(text) {
     tts.setVolume(volume);
@@ -52,9 +52,6 @@ class _ChatState extends State<Chat> {
 
     try {
       final chat = await APiCalls.getChat(msg);
-
-      debugPrint(chat.toString());
-      debugPrint("chat.toString()");
 
       if (chat != null) {
         setState(() {
@@ -140,12 +137,12 @@ class _ChatState extends State<Chat> {
       ),
       body: SafeArea(
         child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/bg.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
+          // decoration: const BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage("images/bg.jpg"),
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           child: Column(
             children: [
               Flexible(

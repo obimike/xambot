@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:xambot/widget/model_list.dart';
+import 'package:xambot/pages/chat_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,52 +12,261 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    var dynamicHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: Text(
-          "XamBot",
-          style: GoogleFonts.poppins(fontSize: 20),
-        ),
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+      body: SafeArea(
           child: Container(
-            height: 24,
-            width: 16,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(48),
-              image: const DecorationImage(
-                image: AssetImage("images/logo.png"),
-                fit: BoxFit.scaleDown,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("images/home_bg.png"), fit: BoxFit.cover),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: RichText(
+                textAlign: TextAlign.right,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Welcome Back,\n",
+                      style: GoogleFonts.poppins(
+                        fontSize: 32,
+                        color: Colors.black,
+                      ),
+                    ),
+                    TextSpan(
+                        text: "What can I do for you?",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        )),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-        centerTitle: true,
-        primary: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.handyman_outlined),
-          ),
-        ],
-      ),
-      body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: const [
-            ModelList(label: "gpt-4", image: "images/gpt4.png"),
-            ModelList(label: "gpt-3.5-turbo", image: "images/gpt3.png"),
-            ModelList(
-                label: "text-davinci-003", image: "images/text_davinci.png"),
-            ModelList(
-                label: "code-davinci-002", image: "images/code_davinci.png"),
-            ModelList(label: "babbage", image: "images/code_davinci.png"),
-            ModelList(label: "davinci", image: "images/code_davinci.png"),
-            ModelList(
-                label: "text-davinci-edit-001",
-                image: "images/code_davinci.png"),
+            const Expanded(child: SizedBox()),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Handle the tap gesture here
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const Chat(
+                              name: "Chat gpt", image: "images/gpt4.png")),
+                    );
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: const Color.fromRGBO(225, 225, 233, 1),
+                          ),
+                          child: const Icon(
+                            Icons.chat,
+                            color: Color.fromRGBO(140, 82, 96, 1),
+                            size: 25,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Text(
+                          "Chat gpt",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const Expanded(child: SizedBox()),
+                GestureDetector(
+                  onTap: () {
+                    // Handle the tap gesture here
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const Chat(
+                              name: "Chat gpt", image: "images/gpt4.png")),
+                    );
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: const Color.fromRGBO(225, 225, 233, 1),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Color.fromRGBO(140, 82, 96, 1),
+                            size: 25,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Text(
+                          "DALL-E",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Handle the tap gesture here
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const Chat(
+                              name: "Chat gpt", image: "images/gpt4.png")),
+                    );
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: const Color.fromRGBO(225, 225, 233, 1),
+                          ),
+                          child: const Icon(
+                            Icons.audiotrack,
+                            color: Color.fromRGBO(140, 82, 96, 1),
+                            size: 25,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Text(
+                          "Audio to text",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const Expanded(child: SizedBox()),
+                GestureDetector(
+                  onTap: () {
+                    // Handle the tap gesture here
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const Chat(
+                              name: "Chat gpt", image: "images/gpt4.png")),
+                    );
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: const Color.fromRGBO(225, 225, 233, 1),
+                          ),
+                          child: const Icon(
+                            Icons.text_format_rounded,
+                            color: Color.fromRGBO(140, 82, 96, 1),
+                            size: 25,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          "Auto Completion",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: dynamicHeight * 0.05,
+            )
           ],
         ),
       )),
