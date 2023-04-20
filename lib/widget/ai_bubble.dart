@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:text_to_speech/text_to_speech.dart';
 
 class AIBubble extends StatefulWidget {
   final String module;
@@ -20,27 +21,30 @@ class AIBubble extends StatefulWidget {
 }
 
 class _AIBubbleState extends State<AIBubble> {
+  bool textToSpeaker = false;
+
+  TextToSpeech tts = TextToSpeech();
+  final String defaultLanguage = 'en-US';
+
+  double volume = 1; // Range: 0-1
+  double rate = 1; // Range: 0-2
+  double pitch = 0.5; // Range: 0-2
+
+  void speak(text) {
+    tts.setVolume(volume);
+    tts.setRate(rate);
+    tts.setLanguage(defaultLanguage);
+    tts.setPitch(pitch);
+    tts.speak(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: 36,
-            width: 36,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              image: DecorationImage(
-                image: AssetImage(widget.moduleImage),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -82,13 +86,12 @@ class _AIBubbleState extends State<AIBubble> {
                   ),
                 ),
                 child: AnimatedTextKit(
+                  isRepeatingAnimation: false,
                   animatedTexts: [
                     TypewriterAnimatedText(
                       widget.msg,
-                      textStyle: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: "manrope",
-                      ),
+                      textStyle: GoogleFonts.manrope(
+                          fontSize: 14, color: Colors.black),
                       speed: const Duration(milliseconds: 100),
                     ),
                   ],
@@ -98,6 +101,24 @@ class _AIBubbleState extends State<AIBubble> {
                 ),
               ),
             ],
+          ),
+          IconButton(
+            onPressed: () {
+              if (textToSpeaker) {
+                setState(() {
+                  textToSpeaker = false;
+                });
+              } else {
+                setState(() {
+                  textToSpeaker = true;
+                });
+              }
+            },
+            icon: textToSpeaker
+                ? const Icon(Icons.volume_up_rounded)
+                : const Icon(Icons.volume_off_rounded),
+            color: Colors.grey[500],
+            iconSize: 24,
           ),
           const Expanded(
             child: SizedBox(),

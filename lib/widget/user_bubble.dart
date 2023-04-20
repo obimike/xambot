@@ -40,15 +40,15 @@ class _UserBubbleState extends State<UserBubble> {
                     style: GoogleFonts.manrope(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white),
+                        color: Colors.black45),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
                   Text(
                     widget.msgTime,
-                    style:
-                        GoogleFonts.manrope(fontSize: 14, color: Colors.white),
+                    style: GoogleFonts.manrope(
+                        fontSize: 14, color: Colors.black45),
                   ),
                 ],
               ),
@@ -58,16 +58,16 @@ class _UserBubbleState extends State<UserBubble> {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey[200],
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(140, 82, 96, 1),
+                  borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
                       topLeft: Radius.circular(16)),
                 ),
-                child: Text(
+                child: SelectableText(
                   widget.msg,
-                  style: GoogleFonts.manrope(fontSize: 14),
+                  style: GoogleFonts.manrope(fontSize: 14, color: Colors.white),
                 ),
               ),
             ],

@@ -4,7 +4,9 @@ import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
 import '../api/send_request.dart';
-import 'package:text_to_speech/text_to_speech.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+
+import 'package:google_fonts/google_fonts.dart';
 
 class Chat extends StatefulWidget {
   final String name;
@@ -16,26 +18,10 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  TextToSpeech tts = TextToSpeech();
-  final String defaultLanguage = 'en-US';
-
-  double volume = 1; // Range: 0-1
-  double rate = 1; // Range: 0-2
-  double pitch = 0.5; // Range: 0-2
-
-  void speak(text) {
-    tts.setVolume(volume);
-    tts.setRate(rate);
-    tts.setLanguage(defaultLanguage);
-    tts.setPitch(pitch);
-    tts.speak(text);
-  }
-
   final _messages = [];
 
   final TextEditingController _controller = TextEditingController();
 
-  bool textToSpeaker = false;
   bool isLoading = false;
 
   void _sendMessage(String msg) async {
@@ -65,9 +51,7 @@ class _ChatState extends State<Chat> {
                 .toString()
           });
         });
-        if (textToSpeaker) {
-          speak(chat.msg);
-        }
+
         scrollToBottom();
       } else {
         print("Error");
@@ -112,107 +96,200 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
 // add this line to scroll to the top
+
+    var dynamicHeight = MediaQuery.of(context).size.height;
+    var dynamicWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: Text(widget.name),
-        actions: [
-          IconButton(
-            onPressed: () {
-              if (textToSpeaker) {
-                setState(() {
-                  textToSpeaker = false;
-                });
-              } else {
-                setState(() {
-                  textToSpeaker = true;
-                });
-              }
-            },
-            icon: textToSpeaker
-                ? const Icon(Icons.speaker_notes)
-                : const Icon(Icons.speaker_notes_off),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Container(
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage("images/bg.jpg"),
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
-          child: Column(
-            children: [
-              Flexible(
-                child: ListView.builder(
-                  controller: scrollController,
-                  reverse: false,
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    return (_messages[index]["role"] == "assistant"
-                        ? AIBubble(
-                            module: widget.name,
-                            moduleImage: widget.image,
-                            msg: _messages[index]["content"].toString(),
-                            msgTime: _messages[index]["time"].toString())
-                        : UserBubble(
-                            module: "You",
-                            moduleImage: "images/ai.png",
-                            msg: _messages[index]["content"].toString(),
-                            msgTime: DateFormat('h:mm a')
-                                .format(DateTime.now())
-                                .toString(),
-                          ));
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+              top: dynamicHeight * 0.05,
+              left: dynamicWidth * 0.02,
+              bottom: dynamicHeight * 0.015,
+              right: dynamicWidth * 0.02,
+            ),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(140, 82, 96, 1),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                  ),
+                  iconSize: 24,
                 ),
-              ),
-              SizedBox(
-                height: isLoading ? 20 : 0,
-                width: 100,
-                child: const LoadKitLineChase(
-                  itemCount: 3,
-                ),
-              ),
-              Container(
-                color: Colors.grey,
-                padding: const EdgeInsets.only(left: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration.collapsed(
-                            hintText: "Send a message...",
-                            fillColor: Colors.grey[300],
-                          ),
-                          controller: _controller,
-                        ),
-                      ),
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    image: DecorationImage(
+                      image: AssetImage(widget.image),
+                      fit: BoxFit.cover,
                     ),
-                    IconButton(
-                      onPressed: () => {
-                        if (_controller.text.isNotEmpty)
-                          {_sendMessage(_controller.text)}
-                      },
-                      icon: Icon(
-                        Icons.send,
-                        color: Colors.blueGrey[900],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              )
-            ],
+                SizedBox(
+                  width: dynamicWidth * 0.04,
+                ),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: "${widget.name} \n",
+                          style: GoogleFonts.poppins(
+                            fontSize: dynamicHeight * 0.04,
+                          )),
+                      const TextSpan(text: "thinking..."),
+                      // AnimatedTextKit(
+                      //   animatedTexts: [
+                      //     TypewriterAnimatedText(
+                      //      "...",
+                      //       textStyle: const TextStyle(
+                      //         fontSize: 14,
+                      //         fontFamily: "manrope",
+                      //       ),
+                      //       speed: const Duration(milliseconds: 100),
+                      //     ),
+                      //   ],
+                      //   totalRepeatCount: 1,
+                      //   displayFullTextOnTap: true,
+                      //   stopPauseOnTap: true,
+                      // ),
+                    ],
+                  ),
+                ),
+                const Expanded(child: SizedBox()),
+                // Container(
+                //   height: 24,
+                //   width: 24,
+                //   padding: EdgeInsets.all(4),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(40),
+                //     color: const Color.fromRGBO(225, 225, 233, 1),
+                //   ),
+                //   child: IconButton(
+                //     onPressed: () {
+                //       Navigator.of(context).pop();
+                //     },
+                //     icon: const Icon(
+                //       Icons.arrow_back_ios_new,
+                //       color: Color.fromRGBO(140, 82, 96, 1),
+                //     ),
+                //     iconSize: 24,
+                //   ),
+                // ),
+              ],
+            ),
           ),
-        ),
+          Flexible(
+            child: ListView.builder(
+              controller: scrollController,
+              reverse: false,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return (_messages[index]["role"] == "assistant"
+                    ? AIBubble(
+                        module: widget.name,
+                        moduleImage: widget.image,
+                        msg: _messages[index]["content"].toString(),
+                        msgTime: _messages[index]["time"].toString())
+                    : UserBubble(
+                        module: "You",
+                        moduleImage: "images/ai.png",
+                        msg: _messages[index]["content"].toString(),
+                        msgTime: DateFormat('h:mm a')
+                            .format(DateTime.now())
+                            .toString(),
+                      ));
+              },
+            ),
+          ),
+          SizedBox(
+            height: isLoading ? 20 : 0,
+            width: 100,
+            child: const LoadKitLineChase(
+              itemCount: 3,
+            ),
+          ),
+          Container(
+            color: Colors.transparent,
+            padding: const EdgeInsets.only(left: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    // height: dynamicHeight * 0.06,
+                    margin: EdgeInsets.all(dynamicWidth * 0.04),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(140, 82, 96, 1),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            style: GoogleFonts.poppins(color: Colors.white),
+                            decoration: InputDecoration.collapsed(
+                              hintText: "Send a message...",
+                              hintStyle:
+                                  GoogleFonts.poppins(color: Colors.white),
+                              fillColor: Colors.white,
+                            ),
+                            controller: _controller,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => {},
+                          icon: Icon(
+                            Icons.mic_sharp,
+                            color: Colors.blueGrey[900],
+                          ),
+                        ),
+                        TextButton(
+                            // style: const ButtonStyle(
+                            //     backgroundColor: MaterialStatePropertyAll(
+                            //   Color.fromRGBO(140, 82, 96, 1),
+                            // )),
+                            onPressed: () {
+                              if (_controller.text.isNotEmpty) {
+                                _sendMessage(_controller.text);
+                              }
+                            },
+                            child: Text(
+                              "Send",
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ))
+                      ],
+                    ),
+                  ),
+                ),
+                // IconButton(
+                //   onPressed: () => {
+                //     if (_controller.text.isNotEmpty)
+                //       {_sendMessage(_controller.text)}
+                //   },
+                //   icon: Icon(
+                //     Icons.send,
+                //     color: Colors.blueGrey[900],
+                //   ),
+                // ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

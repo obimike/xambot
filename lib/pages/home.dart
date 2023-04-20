@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => const Chat(
-                              name: "Chat gpt", image: "images/gpt4.png")),
+                              name: "AI Chat", image: "images/gpt4.png")),
                     );
                   },
                   child: Container(
@@ -88,7 +88,7 @@ class _HomeState extends State<Home> {
                           height: 25,
                         ),
                         Text(
-                          "Chat gpt",
+                          "AI Chat",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.poppins(
                               fontSize:
@@ -137,10 +137,10 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         Text(
-                          "DALL-E",
+                          "Image Generator",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.poppins(
                               fontSize:
@@ -198,7 +198,7 @@ class _HomeState extends State<Home> {
                           height: 25,
                         ),
                         Text(
-                          "Audio to text",
+                          "Audio into text",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.poppins(
                             fontSize: MediaQuery.of(context).size.width * 0.045,
