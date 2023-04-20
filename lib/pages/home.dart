@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:xambot/pages/chat_page.dart';
+import 'package:xambot/pages/image_generator.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -55,8 +56,9 @@ class _HomeState extends State<Home> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => const Chat(
-                              name: "AI Chat", image: "images/gpt4.png")),
+                        builder: (context) => const Chat(
+                            name: "AI Chat", image: "images/gpt4.png"),
+                      ),
                     );
                   },
                   child: Container(
@@ -107,8 +109,9 @@ class _HomeState extends State<Home> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => const Chat(
-                              name: "Chat gpt", image: "images/gpt4.png")),
+                        builder: (context) => const ImageGenerator(
+                            name: "Image Generator", image: "images/gpt3.png"),
+                      ),
                     );
                   },
                   child: Container(

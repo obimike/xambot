@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:xambot/widget/ai_bubble.dart';
-import 'package:xambot/widget/user_bubble.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_load_kit/flutter_load_kit.dart';
-import '../api/send_request.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:xambot/api/send_request.dart';
 
-class Chat extends StatefulWidget {
+class ImageGenerator extends StatefulWidget {
   final String name;
   final String image;
-  const Chat({super.key, required this.name, required this.image});
+  const ImageGenerator({super.key, required this.name, required this.image});
 
   @override
-  State<Chat> createState() => _ChatState();
+  State<ImageGenerator> createState() => _ImageGeneratorState();
 }
 
-class _ChatState extends State<Chat> {
+class _ImageGeneratorState extends State<ImageGenerator> {
   final _messages = [];
 
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _imageDescController = TextEditingController();
 
   bool isLoading = false;
 
   void _sendMessage(String msg) async {
+    debugPrint("qwertyu");
+
     setState(() {
       _messages.add({
         "content": msg,
@@ -33,11 +30,13 @@ class _ChatState extends State<Chat> {
       });
       isLoading = true;
     });
-    _controller.clear();
+    _imageDescController.clear();
     scrollToBottom();
 
+    debugPrint(msg);
+
     try {
-      final chat = await APiCalls.getChat(msg);
+      final chat = await APiCalls.getImages(msg);
 
       if (chat != null) {
         setState(() {
@@ -95,11 +94,8 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-// add this line to scroll to the top
-
     var dynamicHeight = MediaQuery.of(context).size.height;
     var dynamicWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Column(
         children: [
@@ -148,21 +144,6 @@ class _ChatState extends State<Chat> {
                             fontSize: dynamicHeight * 0.035,
                           )),
                       const TextSpan(text: "thinking..."),
-                      // AnimatedTextKit(
-                      //   animatedTexts: [
-                      //     TypewriterAnimatedText(
-                      //      "...",
-                      //       textStyle: const TextStyle(
-                      //         fontSize: 14,
-                      //         fontFamily: "manrope",
-                      //       ),
-                      //       speed: const Duration(milliseconds: 100),
-                      //     ),
-                      //   ],
-                      //   totalRepeatCount: 1,
-                      //   displayFullTextOnTap: true,
-                      //   stopPauseOnTap: true,
-                      // ),
                     ],
                   ),
                 ),
@@ -176,28 +157,8 @@ class _ChatState extends State<Chat> {
               reverse: false,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
-                return (_messages[index]["role"] == "assistant"
-                    ? AIBubble(
-                        module: widget.name,
-                        moduleImage: widget.image,
-                        msg: _messages[index]["content"].toString(),
-                        msgTime: _messages[index]["time"].toString())
-                    : UserBubble(
-                        module: "You",
-                        moduleImage: "images/ai.png",
-                        msg: _messages[index]["content"].toString(),
-                        msgTime: DateFormat('h:mm a')
-                            .format(DateTime.now())
-                            .toString(),
-                      ));
+                return (const Text("Hi"));
               },
-            ),
-          ),
-          SizedBox(
-            height: isLoading ? 20 : 0,
-            width: 100,
-            child: const LoadKitLineChase(
-              itemCount: 3,
             ),
           ),
           Container(
@@ -220,29 +181,18 @@ class _ChatState extends State<Chat> {
                           child: TextField(
                             style: GoogleFonts.poppins(color: Colors.white),
                             decoration: InputDecoration.collapsed(
-                              hintText: "Send a message...",
+                              hintText: "Type image description...",
                               hintStyle:
                                   GoogleFonts.poppins(color: Colors.white),
                               fillColor: Colors.white,
                             ),
-                            controller: _controller,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => {},
-                          icon: Icon(
-                            Icons.mic_sharp,
-                            color: Colors.blueGrey[900],
+                            controller: _imageDescController,
                           ),
                         ),
                         TextButton(
-                            // style: const ButtonStyle(
-                            //     backgroundColor: MaterialStatePropertyAll(
-                            //   Color.fromRGBO(140, 82, 96, 1),
-                            // )),
                             onPressed: () {
-                              if (_controller.text.isNotEmpty) {
-                                _sendMessage(_controller.text);
+                              if (_imageDescController.text.isNotEmpty) {
+                                _sendMessage(_imageDescController.text);
                               }
                             },
                             child: Text(
@@ -256,16 +206,6 @@ class _ChatState extends State<Chat> {
                     ),
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () => {
-                //     if (_controller.text.isNotEmpty)
-                //       {_sendMessage(_controller.text)}
-                //   },
-                //   icon: Icon(
-                //     Icons.send,
-                //     color: Colors.blueGrey[900],
-                //   ),
-                // ),
               ],
             ),
           )

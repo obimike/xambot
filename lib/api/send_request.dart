@@ -9,7 +9,6 @@ class APiCalls {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${dotenv.env['OPENAI_KEY']}',
   };
-
   static String baseURL = "https://api.openai.com/v1";
 
   static Future<dynamic> getChat(msg) async {
@@ -41,6 +40,33 @@ class APiCalls {
       } else {
         return res;
       }
+    } on Exception catch (e) {
+      return e;
+    }
+  }
+
+  static Future<dynamic> getImages(msg) async {
+    try {
+      final url = Uri.parse('$baseURL/images/generations');
+      final data = {"prompt": msg, "n": 2, "size": "1024x1024"};
+      final res =
+          await http.post(url, headers: headers, body: json.encode(data));
+
+      print(res.statusCode);
+
+      // if (res.statusCode == 200) {
+      //   final parsedJson = jsonDecode(res.body);
+
+      //   debugPrint(parsedJson.toString());
+
+      //   final images = parsedJson['data'] as String;
+      //   final time = parsedJson['created'].toString();
+
+      //   // debugPrint(time);
+      //   return ChatModel(msg: content, role: role, time: time);
+      // } else {
+      //   return res;
+      // }
     } on Exception catch (e) {
       return e;
     }
