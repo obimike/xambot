@@ -54,17 +54,20 @@ class _AIBubbleState extends State<AIBubble> {
                   Text(
                     widget.module,
                     style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black45,
+                    ),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
                   Text(
                     widget.msgTime,
-                    style:
-                        GoogleFonts.manrope(fontSize: 14, color: Colors.white),
+                    style: GoogleFonts.manrope(
+                      fontSize: 14,
+                      color: Colors.black45,
+                    ),
                   ),
                 ],
               ),
@@ -108,10 +111,12 @@ class _AIBubbleState extends State<AIBubble> {
                 setState(() {
                   textToSpeaker = false;
                 });
+                tts.stop();
               } else {
                 setState(() {
                   textToSpeaker = true;
                 });
+                speak(widget.msg);
               }
             },
             icon: textToSpeaker
