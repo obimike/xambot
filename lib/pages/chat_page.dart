@@ -236,36 +236,27 @@ class _ChatState extends State<Chat> {
                           ),
                         ),
                         TextButton(
-                            // style: const ButtonStyle(
-                            //     backgroundColor: MaterialStatePropertyAll(
-                            //   Color.fromRGBO(140, 82, 96, 1),
-                            // )),
-                            onPressed: () {
-                              if (_controller.text.isNotEmpty) {
-                                _sendMessage(_controller.text);
-                              }
-                            },
-                            child: Text(
-                              "Send",
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ))
+                          // style: const ButtonStyle(
+                          //     backgroundColor: MaterialStatePropertyAll(
+                          //   Color.fromRGBO(140, 82, 96, 1),
+                          // )),
+                          onPressed: () {
+                            if (_controller.text.isNotEmpty) {
+                              _sendMessage(_controller.text);
+                            }
+                          },
+                          child: Text(
+                            "Send",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () => {
-                //     if (_controller.text.isNotEmpty)
-                //       {_sendMessage(_controller.text)}
-                //   },
-                //   icon: Icon(
-                //     Icons.send,
-                //     color: Colors.blueGrey[900],
-                //   ),
-                // ),
               ],
             ),
           )

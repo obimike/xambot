@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:xambot/model/chat_model.dart';
+import 'package:xambot/model/image_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class APiCalls {
@@ -45,28 +46,26 @@ class APiCalls {
     }
   }
 
-  static Future<dynamic> getImages(msg) async {
+  static Future<dynamic> getImages(desc) async {
     try {
       final url = Uri.parse('$baseURL/images/generations');
-      final data = {"prompt": msg, "n": 2, "size": "1024x1024"};
+      final data = {"prompt": desc, "n": 2, "size": "1024x1024"};
       final res =
           await http.post(url, headers: headers, body: json.encode(data));
 
-      print(res.statusCode);
+      if (res.statusCode == 200) {
+        final parsedJson = jsonDecode(res.body);
 
-      // if (res.statusCode == 200) {
-      //   final parsedJson = jsonDecode(res.body);
+        final images1 = parsedJson['data'][0]['url'] as String;
+        final images2 = parsedJson['data'][1]['url'] as String;
+        final time = parsedJson['created'].toString();
 
-      //   debugPrint(parsedJson.toString());
-
-      //   final images = parsedJson['data'] as String;
-      //   final time = parsedJson['created'].toString();
-
-      //   // debugPrint(time);
-      //   return ChatModel(msg: content, role: role, time: time);
-      // } else {
-      //   return res;
-      // }
+        // debugPrint(time);
+        return ImageModel(
+            url1: images1, url2: images2, role: "assistant", time: time);
+      } else {
+        return res;
+      }
     } on Exception catch (e) {
       return e;
     }

@@ -1,50 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:xambot/api/send_request.dart';
-import 'package:xambot/widget/user_bubble.dart';
-import 'package:xambot/widget/image_bubble.dart';
+import 'package:flutter_load_kit/flutter_load_kit.dart';
+import '../api/send_request.dart';
 
-class ImageGenerator extends StatefulWidget {
+class Audio2Text extends StatefulWidget {
   final String name;
   final String image;
-  const ImageGenerator({super.key, required this.name, required this.image});
+  const Audio2Text({super.key, required this.name, required this.image});
 
   @override
-  State<ImageGenerator> createState() => _ImageGeneratorState();
+  State<Audio2Text> createState() => _Audio2TextState();
 }
 
-class _ImageGeneratorState extends State<ImageGenerator> {
+class _Audio2TextState extends State<Audio2Text> {
   final _messages = [];
 
-  final TextEditingController _imageDescController = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   bool isLoading = false;
 
-  void _getImages(String msg) async {
+  void _sendMessage(String msg) async {
     setState(() {
       _messages.add({
         "content": msg,
-        "url1": null,
-        "url2": null,
         "role": "user",
         "time": DateFormat('h:mm a').format(DateTime.now())
       });
       isLoading = true;
     });
-    _imageDescController.clear();
+    _controller.clear();
     scrollToBottom();
 
     try {
-      final chat = await APiCalls.getImages(msg);
+      final chat = await APiCalls.getChat(msg);
 
       if (chat != null) {
         setState(() {
           isLoading = false;
           _messages.add({
-            "content": null,
-            "url1": chat.url1,
-            "url2": chat.url2,
+            "content": chat.msg,
             "role": chat.role,
             "time": DateFormat('h:mm a')
                 .format(DateTime.fromMillisecondsSinceEpoch(
@@ -98,6 +93,7 @@ class _ImageGeneratorState extends State<ImageGenerator> {
   Widget build(BuildContext context) {
     var dynamicHeight = MediaQuery.of(context).size.height;
     var dynamicWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Column(
         children: [
@@ -146,6 +142,21 @@ class _ImageGeneratorState extends State<ImageGenerator> {
                             fontSize: dynamicHeight * 0.035,
                           )),
                       const TextSpan(text: "thinking..."),
+                      // AnimatedTextKit(
+                      //   animatedTexts: [
+                      //     TypewriterAnimatedText(
+                      //      "...",
+                      //       textStyle: const TextStyle(
+                      //         fontSize: 14,
+                      //         fontFamily: "manrope",
+                      //       ),
+                      //       speed: const Duration(milliseconds: 100),
+                      //     ),
+                      //   ],
+                      //   totalRepeatCount: 1,
+                      //   displayFullTextOnTap: true,
+                      //   stopPauseOnTap: true,
+                      // ),
                     ],
                   ),
                 ),
@@ -160,30 +171,16 @@ class _ImageGeneratorState extends State<ImageGenerator> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
-                    ? Column(
-                        children: [
-                          ImageBubble(
-                            url1: _messages[index]["url1"].toString(),
-                            msgTime: _messages[index]["time"].toString(),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          ImageBubble(
-                            url1: _messages[index]["url2"].toString(),
-                            msgTime: _messages[index]["time"].toString(),
-                          ),
-                        ],
-                      )
-                    : UserBubble(
-                        module: "You",
-                        moduleImage: "images/ai.png",
-                        msg: _messages[index]["content"].toString(),
-                        msgTime: DateFormat('h:mm a')
-                            .format(DateTime.now())
-                            .toString(),
-                      ));
+                    ? Text("Assistant")
+                    : Text("User"));
               },
+            ),
+          ),
+          SizedBox(
+            height: isLoading ? 20 : 0,
+            width: 100,
+            child: const LoadKitLineChase(
+              itemCount: 3,
             ),
           ),
           Container(
@@ -206,27 +203,39 @@ class _ImageGeneratorState extends State<ImageGenerator> {
                           child: TextField(
                             style: GoogleFonts.poppins(color: Colors.white),
                             decoration: InputDecoration.collapsed(
-                              hintText: "Type image description...",
+                              hintText: "Send a message...",
                               hintStyle:
                                   GoogleFonts.poppins(color: Colors.white),
                               fillColor: Colors.white,
                             ),
-                            controller: _imageDescController,
+                            controller: _controller,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => {},
+                          icon: Icon(
+                            Icons.mic_sharp,
+                            color: Colors.blueGrey[900],
                           ),
                         ),
                         TextButton(
-                            onPressed: () {
-                              if (_imageDescController.text.isNotEmpty) {
-                                _getImages(_imageDescController.text);
-                              }
-                            },
-                            child: Text(
-                              "Send",
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ))
+                          // style: const ButtonStyle(
+                          //     backgroundColor: MaterialStatePropertyAll(
+                          //   Color.fromRGBO(140, 82, 96, 1),
+                          // )),
+                          onPressed: () {
+                            if (_controller.text.isNotEmpty) {
+                              _sendMessage(_controller.text);
+                            }
+                          },
+                          child: Text(
+                            "Send",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

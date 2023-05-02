@@ -39,6 +39,12 @@ class _AIBubbleState extends State<AIBubble> {
   }
 
   @override
+  void dispose() {
+    tts.stop();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

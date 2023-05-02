@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'XamBOT',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
         primarySwatch: Colors.blue,
       ),
       home: const Splash(),

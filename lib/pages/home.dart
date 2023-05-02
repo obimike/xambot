@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:xambot/pages/chat_page.dart';
+import 'package:xambot/pages/audio_to_text.dart';
 import 'package:xambot/pages/image_generator.dart';
 
 class Home extends StatefulWidget {
@@ -168,8 +169,8 @@ class _HomeState extends State<Home> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => const Chat(
-                              name: "Chat gpt", image: "images/gpt4.png")),
+                          builder: (context) => const Audio2Text(
+                              name: "Audio into text", image: "images/ai.png")),
                     );
                   },
                   child: Container(
@@ -198,7 +199,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         Text(
                           "Audio into text",
@@ -220,8 +221,9 @@ class _HomeState extends State<Home> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => const Chat(
-                              name: "Chat gpt", image: "images/gpt4.png")),
+                          builder: (context) => const Audio2Text(
+                              name: "Auto Completion",
+                              image: "images/code_davinci.png")),
                     );
                   },
                   child: Container(
