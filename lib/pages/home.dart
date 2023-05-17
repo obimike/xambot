@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:xambot/pages/chat_page.dart';
 import 'package:xambot/pages/audio_to_text.dart';
 import 'package:xambot/pages/image_generator.dart';
+import 'package:xambot/pages/auto_complete.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -166,7 +167,6 @@ class _HomeState extends State<Home> {
                 GestureDetector(
                   onTap: () {
                     // Handle the tap gesture here
-
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => const Audio2Text(
@@ -221,7 +221,7 @@ class _HomeState extends State<Home> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => const Audio2Text(
+                          builder: (context) => const AutoCompletion(
                               name: "Auto Completion",
                               image: "images/code_davinci.png")),
                     );

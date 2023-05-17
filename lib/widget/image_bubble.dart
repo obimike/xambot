@@ -18,13 +18,13 @@ class ImageBubble extends StatefulWidget {
 }
 
 class _ImageBubbleState extends State<ImageBubble> {
-  Future<void> _saveImage(BuildContext context, String _url) async {
+  Future<void> _saveImage(BuildContext context, String url) async {
     String? message;
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
       // Download image
-      final http.Response response = await http.get(Uri.parse(_url));
+      final http.Response response = await http.get(Uri.parse(url));
 
       // Get temporary directory
       final dir = await getTemporaryDirectory();
@@ -52,7 +52,7 @@ class _ImageBubbleState extends State<ImageBubble> {
     }
   }
 
-  Future<void> _shareImage(BuildContext context, String _url) async {}
+  Future<void> _shareImage(BuildContext context, String url) async {}
 
   @override
   Widget build(BuildContext context) {

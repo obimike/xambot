@@ -50,10 +50,10 @@ class _Audio2TextState extends State<Audio2Text> {
 
         scrollToBottom();
       } else {
-        print("Error");
+        debugPrint("Error");
       }
     } on Exception catch (e) {
-      // TODO
+      //
       debugPrint(e.toString());
       setState(() {
         isLoading = false;
@@ -203,7 +203,7 @@ class _Audio2TextState extends State<Audio2Text> {
                           child: TextField(
                             style: GoogleFonts.poppins(color: Colors.white),
                             decoration: InputDecoration.collapsed(
-                              hintText: "Send a message...",
+                              hintText: "Select an audio file...",
                               hintStyle:
                                   GoogleFonts.poppins(color: Colors.white),
                               fillColor: Colors.white,
@@ -211,18 +211,8 @@ class _Audio2TextState extends State<Audio2Text> {
                             controller: _controller,
                           ),
                         ),
-                        IconButton(
-                          onPressed: () => {},
-                          icon: Icon(
-                            Icons.mic_sharp,
-                            color: Colors.blueGrey[900],
-                          ),
-                        ),
+
                         TextButton(
-                          // style: const ButtonStyle(
-                          //     backgroundColor: MaterialStatePropertyAll(
-                          //   Color.fromRGBO(140, 82, 96, 1),
-                          // )),
                           onPressed: () {
                             if (_controller.text.isNotEmpty) {
                               _sendMessage(_controller.text);

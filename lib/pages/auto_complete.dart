@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
 import '../api/send_request.dart';
 
+import 'package:xambot/widget/ac_user_bubble.dart';
+import 'package:xambot/widget/ac_ai_bubble.dart';
+
 class AutoCompletion extends StatefulWidget {
   final String name;
   final String image;
@@ -33,27 +36,30 @@ class _AutoCompletionState extends State<AutoCompletion> {
     scrollToBottom();
 
     try {
-      final chat = await APiCalls.getChat(msg);
+      final text = await APiCalls.getText(msg);
 
-      if (chat != null) {
+
+
+
+      if (text != null) {
         setState(() {
           isLoading = false;
           _messages.add({
-            "content": chat.msg,
-            "role": chat.role,
+            "content":(text.txt).replaceAll(RegExp(r"\n\n"), ""),
+            "role": text.role,
             "time": DateFormat('h:mm a')
                 .format(DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(chat.time) * 1000))
+                   text.time * 1000))
                 .toString()
           });
         });
 
         scrollToBottom();
       } else {
-        print("Error");
+        debugPrint("Error");
       }
     } on Exception catch (e) {
-      // TODO
+      //
       debugPrint(e.toString());
       setState(() {
         isLoading = false;
@@ -142,21 +148,7 @@ class _AutoCompletionState extends State<AutoCompletion> {
                             fontSize: dynamicHeight * 0.035,
                           )),
                       const TextSpan(text: "thinking..."),
-                      // AnimatedTextKit(
-                      //   animatedTexts: [
-                      //     TypewriterAnimatedText(
-                      //      "...",
-                      //       textStyle: const TextStyle(
-                      //         fontSize: 14,
-                      //         fontFamily: "manrope",
-                      //       ),
-                      //       speed: const Duration(milliseconds: 100),
-                      //     ),
-                      //   ],
-                      //   totalRepeatCount: 1,
-                      //   displayFullTextOnTap: true,
-                      //   stopPauseOnTap: true,
-                      // ),
+
                     ],
                   ),
                 ),
@@ -167,12 +159,30 @@ class _AutoCompletionState extends State<AutoCompletion> {
           Flexible(
             child: ListView.builder(
               controller: scrollController,
+              padding: EdgeInsets.only(
+                top: dynamicHeight * 0.02,
+                left: dynamicWidth * 0.02,
+                bottom: dynamicHeight * 0.015,
+                right: dynamicWidth * 0.02,
+              ) ,
+
               reverse: false,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
-                    ? Text("Assistant")
-                    : Text("User"));
+                    ? AIBubble(
+                        module: widget.name,
+                        moduleImage: widget.image,
+                        msg: _messages[index]["content"].toString(),
+                        msgTime: _messages[index]["time"].toString())
+                    : ACUserBubble(
+                        module: "You",
+                        moduleImage: "images/ai.png",
+                        msg: _messages[index]["content"].toString(),
+                        msgTime: DateFormat('h:mm a')
+                            .format(DateTime.now())
+                            .toString(),
+                      ));
               },
             ),
           ),
@@ -190,12 +200,11 @@ class _AutoCompletionState extends State<AutoCompletion> {
                 Expanded(
                   child: Container(
                     // height: dynamicHeight * 0.06,
-                    margin: EdgeInsets.all(dynamicWidth * 0.04),
+                    // margin: EdgeInsets.all(dynamicWidth * 0.04),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(140, 82, 96, 1),
-                      borderRadius: BorderRadius.circular(15.0),
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(140, 82, 96, 1),
                     ),
                     child: Row(
                       children: [

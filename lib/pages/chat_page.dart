@@ -4,7 +4,6 @@ import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
 import '../api/send_request.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -54,10 +53,10 @@ class _ChatState extends State<Chat> {
 
         scrollToBottom();
       } else {
-        print("Error");
+        debugPrint("Error");
       }
     } on Exception catch (e) {
-      // TODO
+      //
       debugPrint(e.toString());
       setState(() {
         isLoading = false;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:xambot/model/chat_model.dart';
+import 'package:xambot/model/text_model.dart';
 import 'package:xambot/model/image_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -24,7 +25,7 @@ class APiCalls {
       final res =
           await http.post(url, headers: headers, body: json.encode(data));
 
-      print(res.statusCode);
+      debugPrint(res.statusCode.toString());
 
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
@@ -70,4 +71,30 @@ class APiCalls {
       return e;
     }
   }
+
+  static Future<dynamic> getTextFromAudio(audio) async {}
+
+  static Future<dynamic> getText(text) async {
+    try {
+      final url = Uri.parse('$baseURL/completions');
+      final data = {
+        "model": "text-davinci-003",
+        "prompt": text,
+        "max_tokens": 1048,
+        "temperature": 0,
+      };
+      final res =
+          await http.post(url, headers: headers, body: json.encode(data));
+      if (res.statusCode == 200) {
+        final parsedJson = jsonDecode(res.body);
+        return TextModel.fromJson(parsedJson);
+      } else {
+        return res;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return e;
+    }
+  }
+
 }

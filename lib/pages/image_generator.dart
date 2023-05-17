@@ -55,10 +55,9 @@ class _ImageGeneratorState extends State<ImageGenerator> {
 
         scrollToBottom();
       } else {
-        print("Error");
+        debugPrint("Error");
       }
     } on Exception catch (e) {
-      // TODO
       debugPrint(e.toString());
       setState(() {
         isLoading = false;
