@@ -3,6 +3,7 @@ import 'package:xambot/pages/splash.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+
   await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.brown,
       ),
       home: const Splash(),
     );

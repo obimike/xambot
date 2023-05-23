@@ -31,13 +31,10 @@ class _ACUserBubbleState extends State<ACUserBubble> {
       child: Row(
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const SizedBox(
-                    width: 16,
-                  ),
                   Text(
                     widget.module,
                     style: GoogleFonts.manrope(

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
+import 'package:xambot/widget/at_user_bubble.dart';
 import '../api/send_request.dart';
+import 'package:file_picker/file_picker.dart';
 
 class Audio2Text extends StatefulWidget {
   final String name;
@@ -15,25 +17,29 @@ class Audio2Text extends StatefulWidget {
 
 class _Audio2TextState extends State<Audio2Text> {
   final _messages = [];
+  String audioName = "Select an audio file...";
+  bool isAudioSelected = false;
+  late PlatformFile audioFile;
 
   final TextEditingController _controller = TextEditingController();
 
   bool isLoading = false;
 
-  void _sendMessage(String msg) async {
+  void _sendMessage(PlatformFile audio) async {
     setState(() {
       _messages.add({
-        "content": msg,
+        "content": audio,
         "role": "user",
         "time": DateFormat('h:mm a').format(DateTime.now())
       });
       isLoading = true;
     });
     _controller.clear();
+    audioName = "Select an audio file...";
     scrollToBottom();
 
     try {
-      final chat = await APiCalls.getChat(msg);
+      final chat = await APiCalls.getTextFromAudio(audio);
 
       if (chat != null) {
         setState(() {
@@ -75,8 +81,8 @@ class _Audio2TextState extends State<Audio2Text> {
 
   @override
   void dispose() {
-    super.dispose();
     scrollController.dispose();
+    super.dispose();
   }
 
   void scrollToBottom() {
@@ -87,6 +93,29 @@ class _Audio2TextState extends State<Audio2Text> {
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeInOut,
     );
+  }
+
+
+
+  void pickAudio() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav'],
+    );
+
+    if (result != null) {
+      audioFile = result.files.single;
+
+      audioName = audioFile.name;
+      isAudioSelected = true;
+      debugPrint(audioFile.toString());
+      debugPrint(audioFile.extension.toString());
+
+      setState(() {});
+    } else {
+      // User canceled the picker
+      debugPrint("User canceled the picker");
+    }
   }
 
   @override
@@ -172,7 +201,14 @@ class _Audio2TextState extends State<Audio2Text> {
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
                     ? Text("Assistant")
-                    : Text("User"));
+                    : UserBubble(
+                        module: "You",
+                        moduleImage: "images/ai.png",
+                        audioFile: _messages[index]["content"],
+                        msgTime: DateFormat('h:mm a')
+                            .format(DateTime.now())
+                            .toString(),
+                      ));
               },
             ),
           ),
@@ -200,26 +236,31 @@ class _Audio2TextState extends State<Audio2Text> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            style: GoogleFonts.poppins(color: Colors.white),
-                            decoration: InputDecoration.collapsed(
-                              hintText: "Select an audio file...",
-                              hintStyle:
-                                  GoogleFonts.poppins(color: Colors.white),
-                              fillColor: Colors.white,
+                          child: InkWell(
+                            onTap: () {
+                              pickAudio();
+                            },
+                            child: TextField(
+                              enabled: false,
+                              style: GoogleFonts.poppins(color: Colors.white),
+                              decoration: InputDecoration.collapsed(
+                                hintText: audioName,
+                                hintStyle:
+                                    GoogleFonts.poppins(color: Colors.white),
+                                fillColor: Colors.white,
+                              ),
+                              controller: _controller,
                             ),
-                            controller: _controller,
                           ),
                         ),
-
                         TextButton(
                           onPressed: () {
-                            if (_controller.text.isNotEmpty) {
-                              _sendMessage(_controller.text);
+                            if (isAudioSelected) {
+                              _sendMessage(audioFile);
                             }
                           },
                           child: Text(
-                            "Send",
+                            "Upload",
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,

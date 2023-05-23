@@ -18,13 +18,7 @@ class Splash extends StatelessWidget {
           image: DecorationImage(
               image: AssetImage("images/home_bg.png"), fit: BoxFit.cover),
         ),
-        // decoration: const BoxDecoration(
-        //   gradient: LinearGradient(
-        //     colors: [Colors.blueGrey, Colors.grey, Colors.blueGrey],
-        //     begin: Alignment.topLeft,
-        //     end: Alignment.bottomRight,
-        //   ),
-        // ),
+
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

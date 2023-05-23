@@ -72,7 +72,22 @@ class APiCalls {
     }
   }
 
-  static Future<dynamic> getTextFromAudio(audio) async {}
+  static Future<dynamic> getTextFromAudio(audio) async {
+    try {
+      final url = Uri.parse('$baseURL/audio/translations');
+      final data = {"file": audio, "model": "whisper-1"};
+      final res =
+          await http.post(url, headers: headers, body: json.encode(data));
+      if (res.statusCode == 200) {
+        final parsedJson = jsonDecode(res.body);
+        print(parsedJson);
+        return '';
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return e;
+    }
+  }
 
   static Future<dynamic> getText(text) async {
     try {
@@ -96,5 +111,4 @@ class APiCalls {
       return e;
     }
   }
-
 }
