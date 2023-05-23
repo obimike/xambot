@@ -71,8 +71,12 @@ class _UserBubbleState extends State<UserBubble> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
-                        Image.asset("musik.jpg", fit: BoxFit.cover, width: 30, height: 30,),
+                        Image.asset(
+                          "images/music_icon.png",
+                          fit: BoxFit.cover,
+                          width: 40,
+                          height: 40,
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

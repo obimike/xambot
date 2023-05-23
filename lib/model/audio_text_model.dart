@@ -1,13 +1,13 @@
-class TextModel {
+class AudioTextModel {
   final String txt;
   final String role;
   final int time;
 
-  TextModel({required this.txt, required this.role, required this.time});
+  AudioTextModel({required this.txt, required this.role, required this.time});
 
-  factory TextModel.fromJson(Map<String, dynamic> json) {
-    return TextModel(
-      txt: json['choices'][0]['text'],
+  factory AudioTextModel.fromJson(Map<String, dynamic> json) {
+    return AudioTextModel(
+      txt: json['message'].content,
       role: "assistant",
       time: json['created'],
     );

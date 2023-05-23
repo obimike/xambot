@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:xambot/model/audio_text_model.dart';
 import 'package:xambot/model/chat_model.dart';
 import 'package:xambot/model/text_model.dart';
 import 'package:xambot/model/image_model.dart';
@@ -81,7 +82,7 @@ class APiCalls {
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
         print(parsedJson);
-        return '';
+        return AudioTextModel.fromJson(parsedJson);
       }
     } catch (e) {
       debugPrint(e.toString());
