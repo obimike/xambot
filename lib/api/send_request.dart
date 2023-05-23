@@ -76,16 +76,30 @@ class APiCalls {
   static Future<dynamic> getTextFromAudio(audio) async {
     try {
       final url = Uri.parse('$baseURL/audio/translations');
-      final data = {"file": audio, "model": "whisper-1"};
-      final res =
-          await http.post(url, headers: headers, body: json.encode(data));
+      // Read the audio file as bytes
+      final audioFile = await http.MultipartFile.fromPath('file', audio.path);
+
+      // Create the multipart request
+      final request = http.MultipartRequest('POST', url)
+        ..fields['model'] = 'whisper-1'
+        ..headers['Authorization'] = 'Bearer ${dotenv.env['OPENAI_KEY']}'
+        ..files.add(audioFile);
+
+      // Send the request and get the response
+      final res = await http.Response.fromStream(await request.send());
+
+      print("-----%%%%%%%%%%%%%%%%%%%%-----");
+
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
-        print(parsedJson);
+        print("----------");
+        print(res.body);
         return AudioTextModel.fromJson(parsedJson);
       }
     } catch (e) {
+      debugPrint("try catch error -  getTextFromAudio");
       debugPrint(e.toString());
+      print(e);
       return e;
     }
   }
@@ -103,6 +117,7 @@ class APiCalls {
           await http.post(url, headers: headers, body: json.encode(data));
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
+
         return TextModel.fromJson(parsedJson);
       } else {
         return res;

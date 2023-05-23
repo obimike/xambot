@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
+import 'package:xambot/widget/ai_bubble.dart';
 import 'package:xambot/widget/at_user_bubble.dart';
 import '../api/send_request.dart';
 import 'package:file_picker/file_picker.dart';
@@ -35,28 +36,34 @@ class _Audio2TextState extends State<Audio2Text> {
       isLoading = true;
     });
     _controller.clear();
+    isAudioSelected = false;
     audioName = "Select an audio file...";
     scrollToBottom();
 
     try {
-      final chat = await APiCalls.getTextFromAudio(audio);
+      final response = await APiCalls.getTextFromAudio(audio);
 
-      if (chat != null) {
+
+
+      if (response != null) {
+        // print(response);
+
         setState(() {
           isLoading = false;
           _messages.add({
-            "content": chat.msg,
-            "role": chat.role,
-            "time": DateFormat('h:mm a')
-                .format(DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(chat.time) * 1000))
-                .toString()
+            "content": response.text,
+            "role": response.role,
+            "time": DateFormat('h:mm a').format(DateTime.now())
           });
         });
 
         scrollToBottom();
       } else {
-        debugPrint("Error");
+        debugPrint("Return error!");
+        debugPrint(response.toString());
+        setState(() {
+          isLoading = false;
+        });
       }
     } on Exception catch (e) {
       //
@@ -95,8 +102,6 @@ class _Audio2TextState extends State<Audio2Text> {
     );
   }
 
-
-
   void pickAudio() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -104,12 +109,10 @@ class _Audio2TextState extends State<Audio2Text> {
     );
 
     if (result != null) {
-      audioFile = result.files.single;
+      audioFile = result.files.first;
 
       audioName = audioFile.name;
       isAudioSelected = true;
-      debugPrint(audioFile.toString());
-      debugPrint(audioFile.extension.toString());
 
       setState(() {});
     } else {
@@ -200,7 +203,13 @@ class _Audio2TextState extends State<Audio2Text> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
-                    ? Text("Assistant")
+                    ? AIBubble(
+                        module: "Audio into text",
+                        moduleImage: "images/ai.png",
+                        msg: _messages[index]["content"],
+                        msgTime: DateFormat('h:mm a')
+                            .format(DateTime.now())
+                            .toString())
                     : UserBubble(
                         module: "You",
                         moduleImage: "images/ai.png",
