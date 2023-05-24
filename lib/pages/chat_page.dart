@@ -1,8 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:xambot/widget/ai_bubble.dart';
 import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_load_kit/flutter_load_kit.dart';
 import '../api/send_request.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -138,33 +138,36 @@ class _ChatState extends State<Chat> {
                 SizedBox(
                   width: dynamicWidth * 0.04,
                 ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: "${widget.name} \n",
-                          style: GoogleFonts.poppins(
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.name,
+                        style: GoogleFonts.poppins(
                             fontSize: dynamicHeight * 0.035,
-                          )),
-                      const TextSpan(text: "thinking..."),
-                      // AnimatedTextKit(
-                      //   animatedTexts: [
-                      //     TypewriterAnimatedText(
-                      //      "...",
-                      //       textStyle: const TextStyle(
-                      //         fontSize: 14,
-                      //         fontFamily: "manrope",
-                      //       ),
-                      //       speed: const Duration(milliseconds: 100),
-                      //     ),
-                      //   ],
-                      //   totalRepeatCount: 1,
-                      //   displayFullTextOnTap: true,
-                      //   stopPauseOnTap: true,
-                      // ),
-                    ],
-                  ),
+                            color: Colors.white)),
+                    Visibility(
+                      visible: isLoading,
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            "thinking...",
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontFamily: "manrope",
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                        ],
+                        totalRepeatCount: 999,
+                        displayFullTextOnTap: false,
+                        stopPauseOnTap: false,
+                      ),
+                    ),
+                  ],
                 ),
+
                 const Expanded(child: SizedBox()),
               ],
             ),
@@ -190,13 +193,6 @@ class _ChatState extends State<Chat> {
                             .toString(),
                       ));
               },
-            ),
-          ),
-          SizedBox(
-            height: isLoading ? 20 : 0,
-            width: 100,
-            child: const LoadKitLineChase(
-              itemCount: 3,
             ),
           ),
           Container(

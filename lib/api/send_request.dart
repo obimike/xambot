@@ -88,18 +88,13 @@ class APiCalls {
       // Send the request and get the response
       final res = await http.Response.fromStream(await request.send());
 
-      print("-----%%%%%%%%%%%%%%%%%%%%-----");
-
       if (res.statusCode == 200) {
         final parsedJson = jsonDecode(res.body);
-        print("----------");
-        print(res.body);
         return AudioTextModel.fromJson(parsedJson);
       }
     } catch (e) {
       debugPrint("try catch error -  getTextFromAudio");
       debugPrint(e.toString());
-      print(e);
       return e;
     }
   }

@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -22,8 +23,6 @@ class _Audio2TextState extends State<Audio2Text> {
   bool isAudioSelected = false;
   late PlatformFile audioFile;
 
-  final TextEditingController _controller = TextEditingController();
-
   bool isLoading = false;
 
   void _sendMessage(PlatformFile audio) async {
@@ -35,15 +34,12 @@ class _Audio2TextState extends State<Audio2Text> {
       });
       isLoading = true;
     });
-    _controller.clear();
     isAudioSelected = false;
     audioName = "Select an audio file...";
     scrollToBottom();
 
     try {
       final response = await APiCalls.getTextFromAudio(audio);
-
-
 
       if (response != null) {
         // print(response);
@@ -165,32 +161,33 @@ class _Audio2TextState extends State<Audio2Text> {
                 SizedBox(
                   width: dynamicWidth * 0.04,
                 ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: "${widget.name} \n",
-                          style: GoogleFonts.poppins(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.name,
+                        style: GoogleFonts.poppins(
                             fontSize: dynamicHeight * 0.035,
-                          )),
-                      const TextSpan(text: "thinking..."),
-                      // AnimatedTextKit(
-                      //   animatedTexts: [
-                      //     TypewriterAnimatedText(
-                      //      "...",
-                      //       textStyle: const TextStyle(
-                      //         fontSize: 14,
-                      //         fontFamily: "manrope",
-                      //       ),
-                      //       speed: const Duration(milliseconds: 100),
-                      //     ),
-                      //   ],
-                      //   totalRepeatCount: 1,
-                      //   displayFullTextOnTap: true,
-                      //   stopPauseOnTap: true,
-                      // ),
-                    ],
-                  ),
+                            color: Colors.white)),
+                    Visibility(
+                      visible: isLoading,
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            "upload audio...",
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontFamily: "manrope",
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                        ],
+                        totalRepeatCount: 999,
+                        displayFullTextOnTap: false,
+                        stopPauseOnTap: false,
+                      ),
+                    ),
+                  ],
                 ),
                 const Expanded(child: SizedBox()),
               ],
@@ -221,13 +218,7 @@ class _Audio2TextState extends State<Audio2Text> {
               },
             ),
           ),
-          SizedBox(
-            height: isLoading ? 20 : 0,
-            width: 100,
-            child: const LoadKitLineChase(
-              itemCount: 3,
-            ),
-          ),
+
           Container(
             color: Colors.transparent,
             child: Row(
@@ -258,7 +249,6 @@ class _Audio2TextState extends State<Audio2Text> {
                                     GoogleFonts.poppins(color: Colors.white),
                                 fillColor: Colors.white,
                               ),
-                              controller: _controller,
                             ),
                           ),
                         ),

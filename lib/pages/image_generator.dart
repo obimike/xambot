@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -136,18 +137,36 @@ class _ImageGeneratorState extends State<ImageGenerator> {
                 SizedBox(
                   width: dynamicWidth * 0.04,
                 ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: "${widget.name} \n",
-                          style: GoogleFonts.poppins(
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.name,
+                        style: GoogleFonts.poppins(
                             fontSize: dynamicHeight * 0.035,
-                          )),
-                      const TextSpan(text: "thinking..."),
-                    ],
-                  ),
+                            color: Colors.white)),
+                    Visibility(
+                      visible: isLoading,
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            "generating images...",
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontFamily: "manrope",
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                        ],
+                        totalRepeatCount: 999,
+                        displayFullTextOnTap: false,
+                        stopPauseOnTap: false,
+                      ),
+                    ),
+                  ],
                 ),
+
                 const Expanded(child: SizedBox()),
               ],
             ),
