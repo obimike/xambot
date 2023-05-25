@@ -169,6 +169,16 @@ class _ChatState extends State<Chat> {
                 ),
 
                 const Expanded(child: SizedBox()),
+                IconButton(
+                  onPressed: () {
+                    //  TODO: clear history
+                  },
+                  icon: const Icon(
+                    Icons.clear_all_sharp,
+                    color: Colors.white,
+                  ),
+                  iconSize: 24,
+                ),
               ],
             ),
           ),

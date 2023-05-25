@@ -123,6 +123,7 @@ class _Audio2TextState extends State<Audio2Text> {
     var dynamicWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+
       body: Column(
         children: [
           Container(
@@ -190,6 +191,16 @@ class _Audio2TextState extends State<Audio2Text> {
                   ],
                 ),
                 const Expanded(child: SizedBox()),
+                IconButton(
+                  onPressed: () {
+                  //  TODO: clear history
+                  },
+                  icon: const Icon(
+                    Icons.clear_all_sharp,
+                    color: Colors.white,
+                  ),
+                  iconSize: 24,
+                ),
               ],
             ),
           ),

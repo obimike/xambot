@@ -143,10 +143,15 @@ class _AutoCompletionState extends State<AutoCompletion> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.name,
-                        style: GoogleFonts.poppins(
-                            fontSize: dynamicHeight * 0.035,
-                            color: Colors.white)),
+                    SizedBox(
+                      width: dynamicWidth * 0.5,
+                      child: Text(widget.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                              fontSize: dynamicHeight * 0.035,                            
+                              color: Colors.white)),
+                    ),
                     Visibility(
                       visible: isLoading,
                       child: AnimatedTextKit(
@@ -170,6 +175,16 @@ class _AutoCompletionState extends State<AutoCompletion> {
                 ),
 
                 const Expanded(child: SizedBox()),
+                IconButton(
+                  onPressed: () {
+                    //  TODO: clear history
+                  },
+                  icon: const Icon(
+                    Icons.clear_all_sharp,
+                    color: Colors.white,
+                  ),
+                  iconSize: 24,
+                ),
               ],
             ),
           ),
