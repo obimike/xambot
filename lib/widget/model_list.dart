@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:xambot/pages/chat_page.dart';
+import 'package:xambot/features/chatpage/pages/chat_page.dart';
 
 class ModelList extends StatefulWidget {
   final String label;

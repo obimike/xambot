@@ -1,59 +1,65 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:xambot/widget/ai_bubble.dart';
-import 'package:xambot/widget/user_bubble.dart';
-import 'package:intl/intl.dart';
-import '../api/send_request.dart';
-
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_load_kit/flutter_load_kit.dart';
+import 'package:xambot/features/chatpage/widgets/ai_bubble.dart';
+import 'package:xambot/features/audiototext/widgets/at_user_bubble.dart';
+import '../../../data/api/send_request.dart';
+import 'package:file_picker/file_picker.dart';
 
-class Chat extends StatefulWidget {
+class Audio2Text extends StatefulWidget {
   final String name;
   final String image;
-  const Chat({super.key, required this.name, required this.image});
+  const Audio2Text({super.key, required this.name, required this.image});
 
   @override
-  State<Chat> createState() => _ChatState();
+  State<Audio2Text> createState() => _Audio2TextState();
 }
 
-class _ChatState extends State<Chat> {
+class _Audio2TextState extends State<Audio2Text> {
   final _messages = [];
-
-  final TextEditingController _controller = TextEditingController();
+  String audioName = "Select an audio file...";
+  bool isAudioSelected = false;
+  late PlatformFile audioFile;
 
   bool isLoading = false;
 
-  void _sendMessage(String msg) async {
+  void _sendMessage(PlatformFile audio) async {
     setState(() {
       _messages.add({
-        "content": msg,
+        "content": audio,
         "role": "user",
         "time": DateFormat('h:mm a').format(DateTime.now())
       });
       isLoading = true;
     });
-    _controller.clear();
+    isAudioSelected = false;
+    audioName = "Select an audio file...";
     scrollToBottom();
 
     try {
-      final chat = await APiCalls.getChat(msg);
+      final response = await APiCalls.getTextFromAudio(audio);
 
-      if (chat != null) {
+      if (response != null) {
+        // print(response);
+
         setState(() {
           isLoading = false;
           _messages.add({
-            "content": chat.msg,
-            "role": chat.role,
-            "time": DateFormat('h:mm a')
-                .format(DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(chat.time) * 1000))
-                .toString()
+            "content": response.text,
+            "role": response.role,
+            "time": DateFormat('h:mm a').format(DateTime.now())
           });
         });
 
         scrollToBottom();
       } else {
-        debugPrint("Error");
+        debugPrint("Return error!");
+        debugPrint(response.toString());
+        setState(() {
+          isLoading = false;
+        });
       }
     } on Exception catch (e) {
       //
@@ -78,8 +84,8 @@ class _ChatState extends State<Chat> {
 
   @override
   void dispose() {
-    super.dispose();
     scrollController.dispose();
+    super.dispose();
   }
 
   void scrollToBottom() {
@@ -92,14 +98,32 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  void pickAudio() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav'],
+    );
+
+    if (result != null) {
+      audioFile = result.files.first;
+
+      audioName = audioFile.name;
+      isAudioSelected = true;
+
+      setState(() {});
+    } else {
+      // User canceled the picker
+      debugPrint("User canceled the picker");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-// add this line to scroll to the top
-
     var dynamicHeight = MediaQuery.of(context).size.height;
     var dynamicWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+
       body: Column(
         children: [
           Container(
@@ -138,7 +162,6 @@ class _ChatState extends State<Chat> {
                 SizedBox(
                   width: dynamicWidth * 0.04,
                 ),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -151,7 +174,7 @@ class _ChatState extends State<Chat> {
                       child: AnimatedTextKit(
                         animatedTexts: [
                           TypewriterAnimatedText(
-                            "thinking...",
+                            "upload audio...",
                             textStyle: const TextStyle(
                               fontSize: 14,
                               color: Colors.white,
@@ -167,11 +190,10 @@ class _ChatState extends State<Chat> {
                     ),
                   ],
                 ),
-
                 const Expanded(child: SizedBox()),
                 IconButton(
                   onPressed: () {
-                    //  TODO: clear history
+                  //  TODO: clear history
                   },
                   icon: const Icon(
                     Icons.clear_all_sharp,
@@ -190,14 +212,16 @@ class _ChatState extends State<Chat> {
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
                     ? AIBubble(
-                        module: widget.name,
-                        moduleImage: widget.image,
-                        msg: _messages[index]["content"].toString(),
-                        msgTime: _messages[index]["time"].toString())
+                        module: "Audio into text",
+                        moduleImage: "images/ai.png",
+                        msg: _messages[index]["content"],
+                        msgTime: DateFormat('h:mm a')
+                            .format(DateTime.now())
+                            .toString())
                     : UserBubble(
                         module: "You",
                         moduleImage: "images/ai.png",
-                        msg: _messages[index]["content"].toString(),
+                        audioFile: _messages[index]["content"],
                         msgTime: DateFormat('h:mm a')
                             .format(DateTime.now())
                             .toString(),
@@ -205,6 +229,7 @@ class _ChatState extends State<Chat> {
               },
             ),
           ),
+
           Container(
             color: Colors.transparent,
             child: Row(
@@ -222,36 +247,30 @@ class _ChatState extends State<Chat> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            style: GoogleFonts.poppins(color: Colors.white),
-                            decoration: InputDecoration.collapsed(
-                              hintText: "Send a message...",
-                              hintStyle:
-                                  GoogleFonts.poppins(color: Colors.white),
-                              fillColor: Colors.white,
+                          child: InkWell(
+                            onTap: () {
+                              pickAudio();
+                            },
+                            child: TextField(
+                              enabled: false,
+                              style: GoogleFonts.poppins(color: Colors.white),
+                              decoration: InputDecoration.collapsed(
+                                hintText: audioName,
+                                hintStyle:
+                                    GoogleFonts.poppins(color: Colors.white),
+                                fillColor: Colors.white,
+                              ),
                             ),
-                            controller: _controller,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => {},
-                          icon: Icon(
-                            Icons.mic_sharp,
-                            color: Colors.blueGrey[900],
                           ),
                         ),
                         TextButton(
-                          // style: const ButtonStyle(
-                          //     backgroundColor: MaterialStatePropertyAll(
-                          //   Color.fromRGBO(140, 82, 96, 1),
-                          // )),
                           onPressed: () {
-                            if (_controller.text.isNotEmpty) {
-                              _sendMessage(_controller.text);
+                            if (isAudioSelected) {
+                              _sendMessage(audioFile);
                             }
                           },
                           child: Text(
-                            "Send",
+                            "Upload",
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,

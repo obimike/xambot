@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:xambot/pages/home.dart';
+import 'package:xambot/features/home/ui/home.dart';
 
 class Splash extends StatelessWidget {
   const Splash({super.key});
@@ -14,10 +14,10 @@ class Splash extends StatelessWidget {
     });
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("images/home_bg.png"), fit: BoxFit.cover),
-        ),
+        // decoration: const BoxDecoration(
+        //   image: DecorationImage(
+        //       image: AssetImage("images/home_bg.png"), fit: BoxFit.cover),
+        // ),
 
         child: Center(
           child: Column(

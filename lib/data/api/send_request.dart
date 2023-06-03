@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:xambot/model/audio_text_model.dart';
-import 'package:xambot/model/chat_model.dart';
-import 'package:xambot/model/text_model.dart';
-import 'package:xambot/model/image_model.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:xambot/data/models/audio_text_model.dart';
+import 'package:xambot/data/models/chat_model.dart';
+import 'package:xambot/data/models/image_model.dart';
+import 'package:xambot/data/models/text_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class APiCalls {
@@ -23,28 +24,40 @@ class APiCalls {
           {"role": "user", "content": msg}
         ]
       };
-      final res =
-          await http.post(url, headers: headers, body: json.encode(data));
 
-      debugPrint(res.statusCode.toString());
+      print(await InternetConnectionChecker().connectionStatus);
+      if(await InternetConnectionChecker().hasConnection){
 
-      if (res.statusCode == 200) {
-        final parsedJson = jsonDecode(res.body);
 
-        debugPrint(parsedJson.toString());
+        print(await InternetConnectionChecker().hasConnection);
 
-        final role = parsedJson['choices'][0]['message']['role'] as String;
-        final content =
-            parsedJson['choices'][0]['message']['content'] as String;
-        final time = parsedJson['created'].toString();
+        final res =
+        await http.post(url, headers: headers, body: json.encode(data));
 
-        // debugPrint(time);
-        return ChatModel(msg: content, role: role, time: time);
-      } else {
-        return res;
+        debugPrint(res.statusCode.toString());
+
+        if (res.statusCode == 200) {
+          final parsedJson = jsonDecode(res.body);
+
+          debugPrint(parsedJson.toString());
+
+          final role = parsedJson['choices'][0]['message']['role'] as String;
+          final content =
+          parsedJson['choices'][0]['message']['content'] as String;
+          final time = parsedJson['created'].toString();
+
+          return ChatModel(msg: content, role: role, time: time);
+        } else {
+          return res.body;
+        }
+      } else{
+        return {"error"};
       }
-    } on Exception catch (e) {
-      return e;
+
+
+    } on Exception catch(e) {
+      print(e);
+      rethrow;
     }
   }
 

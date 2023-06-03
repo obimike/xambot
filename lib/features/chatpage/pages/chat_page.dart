@@ -1,68 +1,77 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:xambot/features/chatpage/widgets/ai_bubble.dart';
+import 'package:xambot/widget/error_bubble.dart';
+import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_load_kit/flutter_load_kit.dart';
-import 'package:xambot/widget/ai_bubble.dart';
-import 'package:xambot/widget/at_user_bubble.dart';
-import '../api/send_request.dart';
-import 'package:file_picker/file_picker.dart';
+import '../../../data/api/send_request.dart';
 
-class Audio2Text extends StatefulWidget {
+import 'package:google_fonts/google_fonts.dart';
+
+class Chat extends StatefulWidget {
   final String name;
   final String image;
-  const Audio2Text({super.key, required this.name, required this.image});
+  const Chat({super.key, required this.name, required this.image});
 
   @override
-  State<Audio2Text> createState() => _Audio2TextState();
+  State<Chat> createState() => _ChatState();
 }
 
-class _Audio2TextState extends State<Audio2Text> {
+class _ChatState extends State<Chat> {
   final _messages = [];
-  String audioName = "Select an audio file...";
-  bool isAudioSelected = false;
-  late PlatformFile audioFile;
-
   bool isLoading = false;
+  final TextEditingController _controller = TextEditingController();
 
-  void _sendMessage(PlatformFile audio) async {
+
+  void _sendMessage(String msg) async {
     setState(() {
       _messages.add({
-        "content": audio,
+        "content": msg,
         "role": "user",
         "time": DateFormat('h:mm a').format(DateTime.now())
       });
       isLoading = true;
     });
-    isAudioSelected = false;
-    audioName = "Select an audio file...";
+    _controller.clear();
     scrollToBottom();
 
     try {
-      final response = await APiCalls.getTextFromAudio(audio);
+      final chat = await APiCalls.getChat(msg);
 
-      if (response != null) {
-        // print(response);
+      print(chat);
 
+      if (chat != null) {
         setState(() {
           isLoading = false;
           _messages.add({
-            "content": response.text,
-            "role": response.role,
-            "time": DateFormat('h:mm a').format(DateTime.now())
+            "content": chat.msg,
+            "role": chat.role,
+            "time": DateFormat('h:mm a')
+                .format(DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(chat.time) * 1000))
+                .toString()
           });
         });
 
         scrollToBottom();
       } else {
-        debugPrint("Return error!");
-        debugPrint(response.toString());
-        setState(() {
-          isLoading = false;
+        debugPrint("Error");
+        _messages.add({
+          "content": "Something went wrong, Unable to get result.",
+          "role": "error",
+          "time": DateFormat('h:mm a').format(DateTime.now())
         });
+        setState(() {});
       }
     } on Exception catch (e) {
       //
+      // print(e);
+      _messages.add({
+        "content": "Something went wrong, Unable to get result.",
+        "role": "error",
+        "time": DateFormat('h:mm a').format(DateTime.now())
+      });
+      setState(() {});
       debugPrint(e.toString());
       setState(() {
         isLoading = false;
@@ -84,8 +93,8 @@ class _Audio2TextState extends State<Audio2Text> {
 
   @override
   void dispose() {
-    scrollController.dispose();
     super.dispose();
+    scrollController.dispose();
   }
 
   void scrollToBottom() {
@@ -98,32 +107,14 @@ class _Audio2TextState extends State<Audio2Text> {
     );
   }
 
-  void pickAudio() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['mp3', 'wav'],
-    );
-
-    if (result != null) {
-      audioFile = result.files.first;
-
-      audioName = audioFile.name;
-      isAudioSelected = true;
-
-      setState(() {});
-    } else {
-      // User canceled the picker
-      debugPrint("User canceled the picker");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+// add this line to scroll to the top
+
     var dynamicHeight = MediaQuery.of(context).size.height;
     var dynamicWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-
       body: Column(
         children: [
           Container(
@@ -174,7 +165,7 @@ class _Audio2TextState extends State<Audio2Text> {
                       child: AnimatedTextKit(
                         animatedTexts: [
                           TypewriterAnimatedText(
-                            "upload audio...",
+                            "thinking...",
                             textStyle: const TextStyle(
                               fontSize: 14,
                               color: Colors.white,
@@ -193,7 +184,7 @@ class _Audio2TextState extends State<Audio2Text> {
                 const Expanded(child: SizedBox()),
                 IconButton(
                   onPressed: () {
-                  //  TODO: clear history
+                    //  TODO: clear history
                   },
                   icon: const Icon(
                     Icons.clear_all_sharp,
@@ -212,24 +203,30 @@ class _Audio2TextState extends State<Audio2Text> {
               itemBuilder: (context, index) {
                 return (_messages[index]["role"] == "assistant"
                     ? AIBubble(
-                        module: "Audio into text",
-                        moduleImage: "images/ai.png",
-                        msg: _messages[index]["content"],
-                        msgTime: DateFormat('h:mm a')
-                            .format(DateTime.now())
-                            .toString())
-                    : UserBubble(
-                        module: "You",
-                        moduleImage: "images/ai.png",
-                        audioFile: _messages[index]["content"],
-                        msgTime: DateFormat('h:mm a')
-                            .format(DateTime.now())
-                            .toString(),
-                      ));
+                        module: widget.name,
+                        moduleImage: widget.image,
+                        msg: _messages[index]["content"].toString(),
+                        msgTime: _messages[index]["time"].toString())
+                    : _messages[index]["role"] == "user"
+                        ? UserBubble(
+                            module: "You",
+                            moduleImage: "images/ai.png",
+                            msg: _messages[index]["content"].toString(),
+                            msgTime: DateFormat('h:mm a')
+                                .format(DateTime.now())
+                                .toString(),
+                          )
+                        : ErrorBubble(
+                            module: "Error",
+                            msg: _messages[index]["content"].toString(),
+                            msgTime: DateFormat('h:mm a')
+                                .format(DateTime.now())
+                                .toString(),
+                          ));
               },
             ),
           ),
-
+          //low part
           Container(
             color: Colors.transparent,
             child: Row(
@@ -247,30 +244,36 @@ class _Audio2TextState extends State<Audio2Text> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              pickAudio();
-                            },
-                            child: TextField(
-                              enabled: false,
-                              style: GoogleFonts.poppins(color: Colors.white),
-                              decoration: InputDecoration.collapsed(
-                                hintText: audioName,
-                                hintStyle:
-                                    GoogleFonts.poppins(color: Colors.white),
-                                fillColor: Colors.white,
-                              ),
+                          child: TextField(
+                            style: GoogleFonts.poppins(color: Colors.white),
+                            decoration: InputDecoration.collapsed(
+                              hintText: "Send a message...",
+                              hintStyle:
+                                  GoogleFonts.poppins(color: Colors.white),
+                              fillColor: Colors.white,
                             ),
+                            controller: _controller,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => {},
+                          icon: Icon(
+                            Icons.mic_sharp,
+                            color: Colors.blueGrey[900],
                           ),
                         ),
                         TextButton(
+                          // style: const ButtonStyle(
+                          //     backgroundColor: MaterialStatePropertyAll(
+                          //   Color.fromRGBO(140, 82, 96, 1),
+                          // )),
                           onPressed: () {
-                            if (isAudioSelected) {
-                              _sendMessage(audioFile);
+                            if (_controller.text.isNotEmpty) {
+                              _sendMessage(_controller.text);
                             }
                           },
                           child: Text(
-                            "Upload",
+                            "Send",
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,

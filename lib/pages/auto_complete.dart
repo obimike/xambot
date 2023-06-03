@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
-import '../api/send_request.dart';
+import '../data/api/send_request.dart';
 
 import 'package:xambot/widget/ac_user_bubble.dart';
 import 'package:xambot/widget/ac_ai_bubble.dart';
@@ -218,20 +218,14 @@ class _AutoCompletionState extends State<AutoCompletion> {
               },
             ),
           ),
-          SizedBox(
-            height: isLoading ? 20 : 0,
-            width: 100,
-            child: const LoadKitLineChase(
-              itemCount: 3,
-            ),
-          ),
+
           Container(
             color: Colors.transparent,
             child: Row(
               children: [
                 Expanded(
                   child: Container(
-                    // height: dynamicHeight * 0.06,
+                    height: dynamicHeight * 0.08,
                     // margin: EdgeInsets.all(dynamicWidth * 0.04),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 0),
@@ -273,7 +267,8 @@ class _AutoCompletionState extends State<AutoCompletion> {
                             "Send",
                             style: GoogleFonts.poppins(
                               color: Colors.white,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

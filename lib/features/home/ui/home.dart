@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:xambot/pages/chat_page.dart';
-import 'package:xambot/pages/audio_to_text.dart';
+import 'package:xambot/features/chatpage/pages/chat_page.dart';
+import 'package:xambot/features/audiototext/pages/audio_to_text.dart';
 import 'package:xambot/pages/image_generator.dart';
 import 'package:xambot/pages/auto_complete.dart';
 
