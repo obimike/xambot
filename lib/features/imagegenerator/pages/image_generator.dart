@@ -2,9 +2,9 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:xambot/core/widgets/user_bubble.dart';
 import 'package:xambot/data/api/send_request.dart';
-import 'package:xambot/widget/user_bubble.dart';
-import 'package:xambot/widget/image_bubble.dart';
+import 'package:xambot/features/imagegenerator/widgets/image_bubble.dart';
 
 class ImageGenerator extends StatefulWidget {
   final String name;

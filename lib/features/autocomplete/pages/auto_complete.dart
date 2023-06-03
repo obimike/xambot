@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_load_kit/flutter_load_kit.dart';
-import '../data/api/send_request.dart';
+import '../../../data/api/send_request.dart';
 
-import 'package:xambot/widget/ac_user_bubble.dart';
-import 'package:xambot/widget/ac_ai_bubble.dart';
+import 'package:xambot/features/autocomplete/widgets/ac_user_bubble.dart';
+import 'package:xambot/features/autocomplete/widgets/ac_ai_bubble.dart';
 
 class AutoCompletion extends StatefulWidget {
   final String name;

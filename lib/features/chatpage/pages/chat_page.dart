@@ -1,8 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:xambot/core/widgets/error_bubble.dart';
+import 'package:xambot/core/widgets/user_bubble.dart';
 import 'package:xambot/features/chatpage/widgets/ai_bubble.dart';
-import 'package:xambot/widget/error_bubble.dart';
-import 'package:xambot/widget/user_bubble.dart';
 import 'package:intl/intl.dart';
 import '../../../data/api/send_request.dart';
 
